@@ -6,6 +6,7 @@ cap = cv.VideoCapture(0)
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+eye_closed_count = 0
 
 while True:
     _, frame = cap.read()
@@ -29,8 +30,9 @@ while True:
         cv.circle(frame, (x_left, y_left), 3, (0,0,255), 2)
         cv.circle(frame, (x_right, y_right), 3, (0,0,255), 2)
 
-        if x_bottom == x_top and y_bottom == x_top:
-            print("eye closed")
+        if x_bottom == x_top:
+            eye_closed_count += 1
+            print("eye closed", eye_closed_count)
 
     cv.imshow('frame', frame)
 
