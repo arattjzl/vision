@@ -11,6 +11,8 @@ eye_closed_count = 0
 while True:
     _, frame = cap.read()
 
+    matrix = cv.imread(frame)
+
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     faces = detector(gray)
@@ -25,14 +27,19 @@ while True:
 
         x_top, y_top = landmarks.part(37).x, landmarks.part(37).y
 
-        x_bottom, y_bottom = landmarks.part(41).x, landmarks.part(41).y
+        x_bottom, y_bottom = landmarks.part(41).x, landmarks.part(42).y
+
+        #TODO quiero obtener la mitad entre top y bottom y si ese punto cambia de color (de blanco a otro ) quiere decir que cerro el ojo
+        middle_of_eye = abs((x_top-x_bottom)/2)
+
+        if matrix[middle_of_eye][y_top] == matrix[x_top][y_top]:
+            eye_closed_count += 1
+            print("eye closed", eye_closed_count)
 
         cv.circle(frame, (x_left, y_left), 3, (0,0,255), 2)
         cv.circle(frame, (x_right, y_right), 3, (0,0,255), 2)
-
-        if x_bottom == x_top:
-            eye_closed_count += 1
-            print("eye closed", eye_closed_count)
+        cv.circle(frame, (x_top, y_top), 3, (0,0,255), 2)
+        cv.circle(frame, (x_bottom, y_bottom), 3, (0,0,255), 2)
 
     cv.imshow('frame', frame)
 
