@@ -9,7 +9,7 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 eye_closed_count = 0
 
 def midpoint(p1, p2):
-    return int((p1.x + p2.x) / 2), int((p1.y, p2.y) / 2)   
+    return int((p1.x + p2.x) / 2), int((p1.y + p2.y) / 2)   
 
 while True:
     _, frame = cap.read()
@@ -41,7 +41,7 @@ while True:
         #middle_of_eye = abs((x_top-x_bottom)/2)
 
         left_point = (landmarks.part(36).x, landmarks.part(36).y)
-        right_point = (landmarks.part(39).x, landmarks.part(39).x)
+        right_point = (landmarks.part(39).x, landmarks.part(39).y)
 
         center_top = midpoint(landmarks.part(37), landmarks.part(38))
         center_bottom = midpoint(landmarks.part(41), landmarks.part(40))
