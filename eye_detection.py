@@ -8,10 +8,13 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 eye_closed_count = 0
 
+def midpoint(p1, p2):
+    return int((p1.x + p2.x) / 2), int((p1.y, p2.y) / 2)   
+
 while True:
     _, frame = cap.read()
 
-    matrix = cv.imread(frame)
+    #matrix = cv.imread(frame)
 
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
@@ -19,27 +22,32 @@ while True:
     for face in faces:
         x, y = face.left(), face.top()
         x1, y1 = face.right(), face.bottom()
+
         #cv.rectangle(frame, (x, y), (x1, y1), (0, 0, 255), 2)
         landmarks = predictor(gray, face)
-        x_left, y_left = landmarks.part(36).x, landmarks.part(36).y
+        x_36, y_36 = landmarks.part(36).x, landmarks.part(36).y
 
-        x_right, y_right = landmarks.part(39).x, landmarks.part(39).y
+        x_39, y_39 = landmarks.part(39).x, landmarks.part(39).y
 
-        x_top, y_top = landmarks.part(37).x, landmarks.part(37).y
+        x_37, y_37 = landmarks.part(37).x, landmarks.part(37).y
 
-        x_bottom, y_bottom = landmarks.part(41).x, landmarks.part(42).y
+        x_38, y_38 = landmarks.part(38).x, landmarks.part(38).y
+
+        x_41, y_41 = landmarks.part(41).x, landmarks.part(41).y
+
+        x_40, y_40 = landmarks.part(40).x, landmarks.part(40).y
 
         #TODO quiero obtener la mitad entre top y bottom y si ese punto cambia de color (de blanco a otro ) quiere decir que cerro el ojo
-        middle_of_eye = abs((x_top-x_bottom)/2)
+        #middle_of_eye = abs((x_top-x_bottom)/2)
 
-        if matrix[middle_of_eye][y_top] == matrix[x_top][y_top]:
-            eye_closed_count += 1
-            print("eye closed", eye_closed_count)
+        left_point = (landmarks.part(36).x, landmarks.part(36).y)
+        right_point = (landmarks.part(39).x, landmarks.part(39).x)
 
-        cv.circle(frame, (x_left, y_left), 3, (0,0,255), 2)
-        cv.circle(frame, (x_right, y_right), 3, (0,0,255), 2)
-        cv.circle(frame, (x_top, y_top), 3, (0,0,255), 2)
-        cv.circle(frame, (x_bottom, y_bottom), 3, (0,0,255), 2)
+        center_top = midpoint(landmarks.part(37), landmarks.part(38))
+        center_bottom = midpoint(landmarks.part(41), landmarks.part(40))
+
+        hor_line = cv.line(frame, left_point, right_point, (0, 255, 0), 1)
+        vert_line = cv.line(frame, center_top, center_bottom, (0, 255, 0), 1)
 
     cv.imshow('frame', frame)
 
