@@ -1,12 +1,13 @@
 import cv2 as cv
 import numpy as np
 import dlib
+from math import hypot
 
 cap = cv.VideoCapture(0)
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
-eye_closed_count = 0
+font = cv.FONT_HERSHEY_SIMPLEX
 
 def midpoint(p1, p2):
     return int((p1.x + p2.x) / 2), int((p1.y + p2.y) / 2)   
@@ -20,25 +21,8 @@ while True:
 
     faces = detector(gray)
     for face in faces:
-        x, y = face.left(), face.top()
-        x1, y1 = face.right(), face.bottom()
-
         #cv.rectangle(frame, (x, y), (x1, y1), (0, 0, 255), 2)
         landmarks = predictor(gray, face)
-        x_36, y_36 = landmarks.part(36).x, landmarks.part(36).y
-
-        x_39, y_39 = landmarks.part(39).x, landmarks.part(39).y
-
-        x_37, y_37 = landmarks.part(37).x, landmarks.part(37).y
-
-        x_38, y_38 = landmarks.part(38).x, landmarks.part(38).y
-
-        x_41, y_41 = landmarks.part(41).x, landmarks.part(41).y
-
-        x_40, y_40 = landmarks.part(40).x, landmarks.part(40).y
-
-        #TODO quiero obtener la mitad entre top y bottom y si ese punto cambia de color (de blanco a otro ) quiere decir que cerro el ojo
-        #middle_of_eye = abs((x_top-x_bottom)/2)
 
         left_point = (landmarks.part(36).x, landmarks.part(36).y)
         right_point = (landmarks.part(39).x, landmarks.part(39).y)
@@ -48,6 +32,14 @@ while True:
 
         hor_line = cv.line(frame, left_point, right_point, (0, 255, 0), 1)
         vert_line = cv.line(frame, center_top, center_bottom, (0, 255, 0), 1)
+
+        ver_line_len = hypot((center_top[0] - center_bottom[0]), (center_top[1] - center_bottom[1]))
+        hor_line_len = hypot((left_point[0] - right_point[0]), (left_point[1] - right_point[1]))
+
+        ratio = hor_line_len / ver_line_len
+
+        if ratio > 3.9:
+            cv.putText(frame, 'BLINKING', (landmarks.part(8).x, landmarks.part(8).y), font, 2, (0, 0,255))
 
     cv.imshow('frame', frame)
 
