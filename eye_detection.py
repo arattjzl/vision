@@ -2,12 +2,54 @@ import cv2 as cv
 import numpy as np
 import dlib
 from math import hypot
+import time
 
 cap = cv.VideoCapture(0)
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 font = cv.FONT_HERSHEY_SIMPLEX
+
+MORSE_CODE = {
+    'a': '.-',
+    'b': '-...',
+    'c': '-.-.',
+    'd': '-..',
+    'e': '.',
+    'f': '..-.',
+    'g': '--.',
+    'h': '....',
+    'i': '..',
+    'j': '.---',
+    'k': '-.-',
+    'l': '.-..',
+    'm': '--',
+    'n': '-.',
+    'o': '---',
+    'p': '.--.',
+    'q': '--.-',
+    'r': '.-.',
+    's': '...',
+    't': '-',
+    'u': '..-',
+    'v': '...-',
+    'w': '.--',
+    'x': '-..-',
+    'y': '-.--',
+    'z': '--..',
+    '0': '-----',
+    '1': '.----',
+    '2': '..---',
+    '3': '...--',
+    '4': '....-',
+    '5': '.....',
+    '6': '-....',
+    '7': '--...',
+    '8': '---..',
+    '9': '----.',
+}
+
+CODE = {}
 
 def midpoint(p1, p2):
     return int((p1.x + p2.x) / 2), int((p1.y + p2.y) / 2)   
@@ -26,6 +68,10 @@ def get_blinking_ratio(eye_points, facial_landmarks):
     hor_line_len = hypot((left_point[0] - right_point[0]), (left_point[1] - right_point[1]))
 
     return hor_line_len / ver_line_len
+
+def handle_blink():
+    #
+    global algo 
     
 while True:
     _, frame = cap.read()
@@ -48,8 +94,17 @@ while True:
         right_eye_ratio = get_blinking_ratio([42,43,44,45,46,47], landmarks)
         blinking_ratio = (left_eye_ratio + right_eye_ratio) / 2
 
+        # i want to be in this if until i open my eyes again
         if blinking_ratio > 5.3:
+            global start 
+            start = time.time()
+            
             cv.putText(frame, 'BLINKING', (0, int(frame.shape[0]-10)), font, 3, (0, 0, 255))
+        
+        end = time.time()
+        print(end-start)
+
+            #if (end - start) 
 
         # gaze detection
         
@@ -87,7 +142,7 @@ while True:
 
     cv.imshow('frame', frame)
 
-    k = cv.waitKey(1)
+    k = cv.waitKey(5)
     if k == 27:
         break
 
