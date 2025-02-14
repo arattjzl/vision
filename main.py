@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import time
 import tensorflow as tf
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture('test5.mov')
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')   
@@ -20,8 +20,9 @@ while True:
     _, frame = cap.read()
 
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-
-    faces = detector(gray)
+    
+    if frame_count % 5 == 0:
+        faces = detector(gray)  
 
     for face in faces:
         landmarks = predictor(gray, face)
@@ -70,19 +71,20 @@ while True:
         img_array = np.expand_dims(img_gray_resized, axis=0)  # Añadir una dimensión extra para el batch
         img_array = img_array / 255.0  # Normalizar
 
+        if frame_count % 5 == 0:
 
-        pred = model.predict(img_array)
-        class_id = np.argmax(pred, axis=1)
-        print("prediccion", class_id)
-
-        frame_count += 1
+            pred = model.predict(img_array)
+            class_id = np.argmax(pred, axis=1)
+            print("prediccion", class_id) 
 
         cv.putText(frame, labels[class_id[0]], (xtext, ytext), cv.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 3, cv.LINE_AA)
-        #cv.imshow("img", img)
+        cv.imshow("img", img) 
 
-    cv.imshow('frame', frame)
+    frame_count += 1
 
-    if cv.waitKey(1) == ord('q'):
+    # cv.imshow('frame', frame)
+
+    if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
 
