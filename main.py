@@ -25,12 +25,15 @@ try:
 
     start = ''
 
+    startOET = ''
+
     tiempo_total = 0
 
-    frame_ratio = 2
+    frame_ratio = 3
 
     flag = False
 
+    flagO = False
 
     while cap.isOpened():
         _, frame = cap.read()
@@ -93,9 +96,19 @@ try:
                 # print("prediccion", class_id) 
                 if class_id[0] == 0 and not flag:
                     start = time.perf_counter()
+                    endOET = time.perf_counter()
                     flag = True
+                    if not isinstance(startOET, str) and 0.6 < abs(endOET - startOET):
+                        inputs.append(" ")
+                        flagO = False
 
+                #ABIERTO
                 if class_id[0] == 1 and not isinstance(start, str):
+
+                    if not flagO:
+                        startOET = time.perf_counter()
+                        flagO = True
+
                     if flag:
                         end = time.perf_counter()
                         tiempo_total = end - start
@@ -105,6 +118,7 @@ try:
                         inputs.append('.')
                     elif 0.3 < tiempo_total:
                         inputs.append('-')
+                    
                     flag = False
                     tiempo_total = 0
                         
@@ -119,10 +133,11 @@ try:
 
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
-except:
-    print("errores jaja, arreglalos")
+except Exception as e:
+    print(e)
 finally:
     print(inputs)
+
 
 cap.release()
 cv.destroyAllWindows()
