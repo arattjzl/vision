@@ -99,6 +99,7 @@ try:
                     endOET = time.perf_counter()
                     flag = True
                     if not isinstance(startOET, str) and 0.6 < abs(endOET - startOET):
+                        print('abierto', abs(endOET-startOET))
                         inputs.append(" ")
                         flagO = False
 
