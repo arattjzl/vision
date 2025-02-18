@@ -3,6 +3,7 @@
 ## 📌 Description
 
 This project uses **computer vision and neural networks** to detect eye blinks and translate them into **Morse code signals**. The goal is to provide an alternative communication interface, especially for people with limited mobility.
+You need to download [shape predictor](https://github.com/davisking/dlib-models/blob/master/shape_predictor_68_face_landmarks.dat.bz2) to be able to run this project.
 
 ## 🚀 Technologies Used
 
