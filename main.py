@@ -1,7 +1,6 @@
 import cv2 as cv
 import numpy as np
 import dlib
-import matplotlib.pyplot as plt
 import time
 import tensorflow as tf
 import time
@@ -51,10 +50,9 @@ def getEyes(frame, face):
 
     
 try:
-    cap = cv.VideoCapture('testFiles/hola.mp4')
+    cap = cv.VideoCapture(0)
     # cap.set(cv.CAP_PROP_FPS, 30)
     fps = cap.get(cv.CAP_PROP_FPS)
-    delay = int(1000 / fps) if fps > 0 else 30
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')   
     model = tf.keras.models.load_model('models/open-closed-eyes-v3.h5')
@@ -71,12 +69,10 @@ try:
     while cap.isOpened():
         ret, frame = cap.read()
 
-        frame = cv.resize(frame, (640, 360))
-
         if not ret:
             print("FAIL TO READ FRAME")
 
-        print(fps)
+        # print(fps)
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         
         if frame_count % frame_ratio == 0:
@@ -111,14 +107,11 @@ try:
 
                         if totalTimeOpen > 0.7:
                             inputs.append(' ')
+                        # if totalTimeOpen > 1.5:
+                        #     inputs.append('  ')
                         
                         isOpen = False
                         totalTimeOpen = 0
-
-                    # if not isinstance(startTimerOpen, str) and 0.6 < abs(endTimerOpen - startTimerOpen):
-                    #     print('abierto', abs(endTimerOpen-startTimerOpen))
-                    #     inputs.append(" ")
-                    #     isOpen = False
 
                 # OPEN EYE
                 if class_id[0] == 1:
@@ -139,9 +132,8 @@ try:
                     if not isOpen:
                         startTimerOpen = time.perf_counter()
                         isOpen = True
-                        
                 
-            cv.putText(frame, labels[class_id[0]], (xtext, ytext), cv.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 3, cv.LINE_AA)
+            # cv.putText(frame, labels[class_id[0]], (xtext, ytext), cv.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 3, cv.LINE_AA)
             cv.imshow("img", img) 
 
         # print(inputs)
@@ -149,7 +141,7 @@ try:
 
         # cv.imshow('frame', frame)
 
-        if cv.waitKey(delay) & 0xFF == ord('q'):
+        if cv.waitKey(1) & 0xFF == ord('q'):
             break
 except Exception as e:
     print(e)

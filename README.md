@@ -16,8 +16,8 @@ This project uses **computer vision and neural networks** to detect eye blinks a
 1. The camera captures the user's face in real-time.
 2. Eyes are detected, and blink tracking is performed.
 3. An algorithm measures the duration and frequency of blinks.
-4. Short and long blinks are converted into Morse code signals.
-5. The message is translated and displayed on the screen.
+4. Short and long blinks are converted into Morse code signals using morse3 library.
+5. The message is translated and displayed on the cmd.
 
 ## 🎯 Applications
 
