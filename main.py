@@ -50,7 +50,7 @@ try:
     fps = cap.get(cv.CAP_PROP_FPS)
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')   
-    model = tf.keras.models.load_model('models/open-closed-eyes-v3.h5', compile=False)
+    model = tf.keras.models.load_model('models/open-closed-eyes-v4.h5', compile=False)
     labels = ['closed', 'open']
     frame_count = 0
     last = None
@@ -89,52 +89,52 @@ try:
             class_id = np.argmax(pred, axis=1)[0]
             # print("prediccion", class_id)
 
-        #     # CLOSED EYE 
-        #     if class_id == 0:
+            # CLOSED EYE 
+            if class_id == 0:
 
-        #         if not isClose:
-        #             startTimerClose = time.perf_counter()
-        #             isClose = True
+                if not isClose:
+                    startTimerClose = time.perf_counter()
+                    isClose = True
 
-        #         if isOpen:
-        #             endTimerOpen = time.perf_counter()
-        #             totalTimeOpen = endTimerOpen - startTimerOpen
-        #             print("OPEN", totalTimeOpen)
+                if isOpen:
+                    endTimerOpen = time.perf_counter()
+                    totalTimeOpen = endTimerOpen - startTimerOpen
+                    print("OPEN", totalTimeOpen)
 
-        #             if totalTimeOpen > 0.7:
-        #                 inputs.append(' ')
-        #             # if totalTimeOpen > 1.5:
-        #             #     inputs.append('  ')
+                    if totalTimeOpen > 0.7:
+                        inputs.append(' ')
+                    # if totalTimeOpen > 1.5:
+                    #     inputs.append('  ')
                     
-        #             isOpen = False
-        #             totalTimeOpen = 0
+                    isOpen = False
+                    totalTimeOpen = 0
 
-        #     # OPEN EYE
-        #     if class_id == 1:
+            # OPEN EYE
+            if class_id == 1:
 
-        #         if isClose:
-        #             endTimerClose = time.perf_counter()
-        #             totalTimeClosed = endTimerClose - startTimerClose
-        #             print("CLOSE", totalTimeClosed)
+                if isClose:
+                    endTimerClose = time.perf_counter()
+                    totalTimeClosed = endTimerClose - startTimerClose
+                    print("CLOSE", totalTimeClosed)
 
-        #             if 0 < totalTimeClosed < 0.4:
-        #                 inputs.append('.')
-        #             elif 0.4 < totalTimeClosed:
-        #                 inputs.append('-')
+                    if 0 < totalTimeClosed < 0.4:
+                        inputs.append('.')
+                    elif 0.4 < totalTimeClosed:
+                        inputs.append('-')
                     
-        #             isClose = False
-        #             totalTimeClosed = 0
+                    isClose = False
+                    totalTimeClosed = 0
 
-        #         if not isOpen:
-        #             startTimerOpen = time.perf_counter()
-        #             isOpen = True
+                if not isOpen:
+                    startTimerOpen = time.perf_counter()
+                    isOpen = True
 
         # print(inputs)
         # frame_count += 1
 
         # cv.imshow('frame', frame)
 
-        if cv.waitKey(30) & 0xFF == ord('q'):
+        if cv.waitKey(1) & 0xFF == ord('q'):
             break
 except Exception as e:
     print(e)
