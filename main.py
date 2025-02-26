@@ -1,3 +1,4 @@
+
 import cv2 as cv
 import numpy as np
 import dlib
@@ -5,7 +6,7 @@ import time
 import tensorflow as tf
 import time
 from morse3 import Morse
-from functions import getEyes
+from functions import getEyes,summary
 import matplotlib.pyplot as plt
 
 model = tf.keras.models.load_model('models/open-closed-eyes-v8.h5', compile=False)
@@ -18,6 +19,8 @@ def fast_predict(x):
 inputs = []
 open = []
 close = []
+block = []
+
 try:
     test = 'testFiles/hello.mp4'
     cap = cv.VideoCapture(test)
@@ -46,7 +49,7 @@ try:
         img = frame[topx:botx, topy:boty]
         img_gray_resized = cv.resize(img, (224, 224))  # Ajustar tamaño
         
-        plt.imshow(img_gray_resized, cmap='gray')
+        # plt.imshow(img_gray_resized, cmap='gray')
         
         img_array = np.expand_dims(img_gray_resized, axis=0)  # Añadir una dimensión extra para el batch
         img_array = img_array / 255.0  # Normaliza
@@ -59,54 +62,38 @@ try:
 
             # CLOSED EYE 
             if class_id == 0:
-                closeFrameCount += 1
-
-                if not isClose:
-                    isClose = True
-
-                if isOpen:
-                    # print("OPEN", openFrameCount)
-                    if openFrameCount > 30:
-                        inputs.append(' ')
-                    elif openFrameCount > 50:
-                        inputs.append('  ')
-                    
-                    open.append(openFrameCount)
-                    isOpen = False
-                    openFrameCount = 0
+                inputs.append(0)
+                block.append(0)     
 
             # OPEN EYE
             if class_id == 1:
-                openFrameCount += 1
+                inputs.append(1)
+                block.append(1)
 
-                if isClose:
-                    if closeFrameCount < 7:
-                        inputs.append('.')
-                    elif closeFrameCount > 9:
-                        inputs.append('-')
-                    # print("CLOSE", closeFrameCount)
-                    close.append(closeFrameCount)
-                    isClose = False
-                    closeFrameCount = 0
-
-                if not isOpen:
-                    isOpen = True
-
+            if len(block) == 5:
+                if block[0] == block[-1] and block[0] != block[2]:
+                    inputs[-3] = inputs[-1]
+                elif block[0] != block[-1]
+                elif block[-1] == block[-2] and block[1] == block[-1]:
+                    inputs[-3] = inputs[-1]
+                block.pop(0)
+                    
         # # print(inputs)
         frame_count += 1
-        
 
         if cv.waitKey(5) & 0xFF == ord('q'):
             break
+    
+
 except Exception as e:
     print(e)
 finally:
-    textEncoded = "".join(inputs)
+    print(len(inputs), inputs)
+    text = summary(inputs)
+    textEncoded = "".join(text)
     morse = Morse(textEncoded)
     textDecoded = morse.morseToString()
-    print(frame_count, sum(open) + sum(close))
-    print("opne", open, len(open), sum(open))
-    print("close", close, len(close), sum(close))
+
     print(textEncoded)
     print(textDecoded)
 
