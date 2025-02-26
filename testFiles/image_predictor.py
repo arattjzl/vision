@@ -8,7 +8,7 @@ img = cv.resize(img, (224, 224))
 img = img / 255.0
 img_array = np.array([img])
 
-model = tf.keras.models.load_model('models/open-closed-eyes-v3.h5', compile=False)
+model = tf.keras.models.load_model('models/open-closed-eyes-v8.h5', compile=False)
 
 predict = model.predict(img_array)
 print(predict)
