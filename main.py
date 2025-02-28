@@ -9,7 +9,7 @@ from morse3 import Morse
 from functions import getEyes,summary
 import matplotlib.pyplot as plt
 
-model = tf.keras.models.load_model('models/open-closed-eyes-v8.h5', compile=False)
+model = tf.keras.models.load_model('models/open-closed-eyes-v10.h5', compile=False)
 
 @tf.function
 def fast_predict(x):
@@ -54,6 +54,9 @@ try:
         img_array = np.expand_dims(img_gray_resized, axis=0)  # Añadir una dimensión extra para el batch
         img_array = img_array / 255.0  # Normaliza
 
+        if frame_count == 175:
+            cv.imwrite('testFiles/eye.jpg', img_gray_resized)
+        # plt.imshow(img_gray_resized, cmap='gray')
         
         if frame_count % frame_ratio == 0:
             pred = model.predict(img_array)
@@ -70,12 +73,10 @@ try:
                 inputs.append(1)
                 block.append(1)
 
-            if len(block) == 5:
-                if block[0] == block[-1] and block[0] != block[2]:
-                    inputs[-3] = inputs[-1]
-                elif block[0] != block[-1]
-                elif block[-1] == block[-2] and block[1] == block[-1]:
-                    inputs[-3] = inputs[-1]
+            if len(block) == 3:
+                if block[0] != block[1]:
+                    if block[1] != block[2]:
+                        inputs[-2] = inputs[-1]
                 block.pop(0)
                     
         # # print(inputs)
@@ -88,7 +89,8 @@ try:
 except Exception as e:
     print(e)
 finally:
-    print(len(inputs), inputs)
+    print(len(inputs),"Frames")
+    print(inputs)
     text = summary(inputs)
     textEncoded = "".join(text)
     morse = Morse(textEncoded)

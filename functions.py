@@ -66,7 +66,7 @@ def summary(inputs):
             morse.append('  ')
         elif i < 0 and i > -9:
             morse.append('.')
-        elif i < 0 and i > -20:
+        elif i < 0 and i >= -17:
             morse.append('-')
 
     return morse
