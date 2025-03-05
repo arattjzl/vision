@@ -9,7 +9,7 @@ from morse3 import Morse
 from functions import getEyes,summary
 import matplotlib.pyplot as plt
 
-model = tf.keras.models.load_model('models/open-closed-eyes-v10.h5', compile=False)
+model = tf.keras.models.load_model('models/open-closed-eyes-v12.h5', compile=False)
 
 @tf.function
 def fast_predict(x):
