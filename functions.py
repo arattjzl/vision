@@ -70,3 +70,12 @@ def summary(inputs):
             morse.append('-')
 
     return morse
+
+def filtro_moving_average(predicciones, tamaño_ventana=3, umbral=0.55):
+    # Promedio móvil
+    promedio_movil = np.convolve(predicciones, np.ones(tamaño_ventana)/tamaño_ventana, mode='same')
+    
+    # Binarizar según el umbral
+    filtrado = (promedio_movil >= umbral).astype(int)
+    
+    return filtrado

@@ -6,7 +6,7 @@ import time
 import tensorflow as tf
 import time
 from morse3 import Morse
-from functions import getEyes,summary
+from functions import *
 import matplotlib.pyplot as plt
 
 model = tf.keras.models.load_model('models/open-closed-eyes-v12.h5', compile=False)
@@ -38,10 +38,9 @@ try:
         width = int(frame.shape[1] * 0.25)
         height = int(frame.shape[0] * 0.25)
         frame = cv.resize(frame,(width, height))
-        
+        cv.imshow('frame', frame)
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         faces = detector(frame)
-        # # if frame_count % frame_ratio == 0:
         
         topx, topy, botx, boty = getEyes(frame, faces[0])
 
@@ -54,8 +53,8 @@ try:
         img_array = np.expand_dims(img_gray_resized, axis=0)  # Añadir una dimensión extra para el batch
         img_array = img_array / 255.0  # Normaliza
 
-        if frame_count == 286:
-            cv.imwrite('testFiles/eye.jpg', img_gray_resized)
+        # if frame_count == 166:
+        #     cv.imwrite('testFiles/eye.jpg', img_gray_resized)
         # plt.imshow(img_gray_resized, cmap='gray')
 
         if frame_count % frame_ratio == 0:
@@ -79,11 +78,10 @@ try:
                         block[-2] = block[-1]
                         inputs[-2] = inputs[-1]
                 block.pop(0)
-                    
-        # # print(inputs)
+            
         frame_count += 1
 
-        if cv.waitKey(5) & 0xFF == ord('q'):
+        if cv.waitKey(5) & 0xFF == ord('q'): 
             break
     
 
