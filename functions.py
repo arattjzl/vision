@@ -60,13 +60,13 @@ def summary(inputs):
     
     morse = []
     for i in total:
-        if i > 30:
-            morse.append(' ')
-        elif i > 70:
+        if i > 70:
             morse.append('  ')
-        elif i < 0 and i > -11:
+        elif i > 30:
+            morse.append(' ')
+        elif i < 0 and i > -16:
             morse.append('.')
-        elif i < 0 and i >= -22:
+        elif i < 0 and i >= -30:
             morse.append('-')
 
     return morse

@@ -22,7 +22,7 @@ close = []
 block = []
 
 try:
-    test = 'testFiles/hello.mp4'
+    test = 'testFiles/hello_world.mp4'
     cap = cv.VideoCapture(test)
     # cap.set(cv.CAP_PROP_FPS, 30)
     fps = cap.get(cv.CAP_PROP_FPS)
@@ -54,10 +54,10 @@ try:
         img_array = np.expand_dims(img_gray_resized, axis=0)  # Añadir una dimensión extra para el batch
         img_array = img_array / 255.0  # Normaliza
 
-        if frame_count == 175:
+        if frame_count == 286:
             cv.imwrite('testFiles/eye.jpg', img_gray_resized)
         # plt.imshow(img_gray_resized, cmap='gray')
-        
+
         if frame_count % frame_ratio == 0:
             pred = model.predict(img_array)
             class_id = np.argmax(pred, axis=1)[0]
@@ -76,6 +76,7 @@ try:
             if len(block) == 3:
                 if block[0] != block[1]:
                     if block[1] != block[2]:
+                        block[-2] = block[-1]
                         inputs[-2] = inputs[-1]
                 block.pop(0)
                     
